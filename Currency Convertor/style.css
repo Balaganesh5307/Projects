@@ -1,4 +1,3 @@
-/* Global Reset */
 * {
   margin: 0;
   padding: 0;
@@ -12,18 +11,14 @@ body {
   justify-content: center;
   align-items: center;
   background: #0f0c29;
-  /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #24243e, #302b63, #0f0c29);
-  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
-  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   color: #fff;
   padding: 20px;
   overflow-x: hidden;
   position: relative;
 }
 
-/* Background Atmospheric Blobs */
 .background-blobs {
   position: absolute;
   top: 0;
@@ -69,7 +64,6 @@ body {
   }
 }
 
-/* Main Card Style */
 .card {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(20px);
@@ -116,7 +110,6 @@ body {
   font-size: 0.95rem;
 }
 
-/* Form Styling */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -134,7 +127,6 @@ label {
   margin-left: 4px;
 }
 
-/* Custom Input & Select Wrappers */
 .input-wrapper,
 .select-wrapper {
   position: relative;
@@ -163,7 +155,6 @@ input[type="number"],
 select {
   width: 100%;
   padding: 16px 16px 16px 48px;
-  /* Left padding for icons */
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
@@ -178,19 +169,14 @@ select {
 select {
   padding-right: 40px;
   cursor: pointer;
-  /* Reset left padding for select if no icon on left, but we might want consistency */
   padding-left: 16px;
 }
 
-/* Fix for invisible text in dropdowns on some browsers */
 option {
   background-color: #24243e;
-  /* Matches the dark theme */
   color: white;
 }
 
-/* Special Case adjustments */
-/* If we didn't add icons for country flags inside select (which is hard in vanilla), keep simple padding */
 .select-wrapper select {
   padding-left: 16px;
 }
@@ -206,11 +192,9 @@ select:focus {
   color: #2575fc;
 }
 
-/* Layout for Row */
 .currency-row {
   display: flex;
   align-items: flex-end;
-  /* Align inputs */
   gap: 12px;
 }
 
@@ -225,9 +209,7 @@ select:focus {
   justify-content: center;
   width: 40px;
   height: 48px;
-  /* Match input height roughly */
   margin-bottom: 2px;
-  /* Visual alignment with inputs */
   cursor: pointer;
   color: rgba(255, 255, 255, 0.5);
   transition: all 0.3s;
@@ -238,7 +220,6 @@ select:focus {
   transform: scale(1.1);
 }
 
-/* Button */
 .convert-btn {
   width: 100%;
   padding: 16px;
@@ -264,7 +245,6 @@ select:focus {
   transform: translateY(0);
 }
 
-/* Result Area */
 .result-container {
   margin-top: 2rem;
   padding: 1.5rem;
@@ -299,7 +279,6 @@ select:focus {
   font-style: italic;
 }
 
-/* Responsive */
 @media (max-width: 480px) {
   .currency-row {
     flex-direction: column;
@@ -319,4 +298,5 @@ select:focus {
   .card {
     padding: 2rem;
   }
+
 }
