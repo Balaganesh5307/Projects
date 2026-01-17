@@ -1,35 +1,73 @@
 const rates = {
-      USD: 1,
-      EUR: 0.92,
-      GBP: 0.79,
-      INR: 83.5,
-      JPY: 150
-    };
+  USD: 1,
+  EUR: 0.92,
+  GBP: 0.79,
+  INR: 83.5,
+  JPY: 150
+};
 
-    const amountInput = document.getElementById('amount');
-    const fromSelect = document.getElementById('from');
-    const toSelect = document.getElementById('to');
-    const resultDiv = document.getElementById('result');
+const amountInput = document.getElementById('amount');
+const fromSelect = document.getElementById('from');
+const toSelect = document.getElementById('to');
+const resultDiv = document.getElementById('result');
+const swapBtn = document.querySelector('.swap-icon');
 
-    function convertAndShow() {
-      const amount = parseFloat(amountInput.value);
-      if (isNaN(amount)) { resultDiv.textContent = '—'; return; }
+function formatCurrency(amount, currency) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: currency
+    }).format(amount);
+}
 
-      const from = fromSelect.value;
-      const to = toSelect.value;
+function convertAndShow() {
+  const amount = parseFloat(amountInput.value);
+  
+  // If invalid or empty, show placeholder
+  if (isNaN(amount) || amountInput.value === '') { 
+    resultDiv.innerHTML = '<span class="placeholder-text">Enter amount to see result</span>';
+    resultDiv.classList.remove('has-result');
+    return; 
+  }
 
-      const fromRate = rates[from] ?? 1;
-      const toRate = rates[to] ?? 1;
+  const from = fromSelect.value;
+  const to = toSelect.value;
 
-      const converted = amount * (toRate / fromRate);
+  const fromRate = rates[from] ?? 1;
+  const toRate = rates[to] ?? 1;
 
-      resultDiv.textContent = amount + ' ' + from + ' = ' + converted.toFixed(2) + ' ' + to;
-    }
+  const converted = amount * (toRate / fromRate);
 
-    amountInput.addEventListener('input', convertAndShow);
-    fromSelect.addEventListener('change', convertAndShow);
-    toSelect.addEventListener('change', convertAndShow);
+  // UX Improvement: Better formatting
+  resultDiv.classList.add('has-result');
+  resultDiv.innerHTML = `
+    <div class="result-text">
+        ${formatCurrency(amount, from)} = 
+        <span class="result-highlight">${formatCurrency(converted, to)}</span>
+    </div>
+  `;
+}
 
-    document.getElementById('convert').addEventListener('click', function(e){ e.preventDefault(); convertAndShow(); });
+// Event Listeners
+amountInput.addEventListener('input', convertAndShow);
+fromSelect.addEventListener('change', convertAndShow);
+toSelect.addEventListener('change', convertAndShow);
 
+// Swap Functionality
+swapBtn.addEventListener('click', () => {
+    const temp = fromSelect.value;
+    fromSelect.value = toSelect.value;
+    toSelect.value = temp;
+    
+    // Add a little rotation animation effect via CSS class toggling if desired, 
+    // or just rely on the immediate update
     convertAndShow();
+});
+
+// Prevent form submission if user hits enter
+document.getElementById('convert').addEventListener('click', function(e){ 
+    e.preventDefault(); 
+    convertAndShow(); 
+});
+
+// Initial call
+convertAndShow();
