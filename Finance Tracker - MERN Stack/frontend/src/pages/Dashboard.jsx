@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { FiDollarSign, FiTrendingUp, FiTrendingDown, FiPlus } from 'react-icons/fi';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import TransactionItem from '../components/TransactionItem';
@@ -20,7 +20,7 @@ const Dashboard = () => {
 
     const fetchTransactions = async () => {
         try {
-            const res = await axios.get('/api/transactions');
+            const res = await api.get('/api/transactions');
             setTransactions(res.data);
         } catch (err) {
             console.error('Error fetching transactions:', err);
@@ -32,9 +32,9 @@ const Dashboard = () => {
     const handleAddTransaction = async (data) => {
         try {
             if (editTransaction) {
-                await axios.put(`/api/transactions/${editTransaction._id}`, data);
+                await api.put(`/api/transactions/${editTransaction._id}`, data);
             } else {
-                await axios.post('/api/transactions', data);
+                await api.post('/api/transactions', data);
             }
             fetchTransactions();
             setShowForm(false);
@@ -56,7 +56,7 @@ const Dashboard = () => {
     const handleDeleteConfirm = async () => {
         if (deleteConfirm) {
             try {
-                await axios.delete(`/api/transactions/${deleteConfirm}`);
+                await api.delete(`/api/transactions/${deleteConfirm}`);
                 fetchTransactions();
             } catch (err) {
                 console.error('Error deleting transaction:', err);

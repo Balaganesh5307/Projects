@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { FiPlus, FiFilter } from 'react-icons/fi';
 import TransactionItem from '../components/TransactionItem';
 import TransactionForm from '../components/TransactionForm';
@@ -24,7 +24,7 @@ const Transactions = () => {
 
     const fetchTransactions = async () => {
         try {
-            const res = await axios.get('/api/transactions');
+            const res = await api.get('/api/transactions');
             setTransactions(res.data);
         } catch (err) {
             console.error('Error fetching transactions:', err);
@@ -53,9 +53,9 @@ const Transactions = () => {
     const handleAddTransaction = async (data) => {
         try {
             if (editTransaction) {
-                await axios.put(`/api/transactions/${editTransaction._id}`, data);
+                await api.put(`/api/transactions/${editTransaction._id}`, data);
             } else {
-                await axios.post('/api/transactions', data);
+                await api.post('/api/transactions', data);
             }
             fetchTransactions();
             setShowForm(false);
@@ -77,7 +77,7 @@ const Transactions = () => {
     const handleDeleteConfirm = async () => {
         if (deleteConfirm) {
             try {
-                await axios.delete(`/api/transactions/${deleteConfirm}`);
+                await api.delete(`/api/transactions/${deleteConfirm}`);
                 fetchTransactions();
             } catch (err) {
                 console.error('Error deleting transaction:', err);
