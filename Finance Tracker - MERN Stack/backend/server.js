@@ -6,6 +6,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const transactionRoutes = require('./routes/transactions');
 const adminRoutes = require('./routes/admin');
+const User = require('./models/User');
 
 const app = express();
 
@@ -34,8 +35,35 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 app.use(express.json());
 
+const createAdminUser = async () => {
+  try {
+    const adminEmail = 'admin5307@gmail.com';
+    const existingAdmin = await User.findOne({ email: adminEmail });
+
+    if (!existingAdmin) {
+      const admin = new User({
+        name: 'Admin',
+        email: adminEmail,
+        password: 'admin@5307',
+        role: 'admin'
+      });
+      await admin.save();
+      console.log('Admin user created successfully');
+    } else if (existingAdmin.role !== 'admin') {
+      existingAdmin.role = 'admin';
+      await existingAdmin.save();
+      console.log('Existing user promoted to admin');
+    }
+  } catch (err) {
+    console.error('Error creating admin:', err.message);
+  }
+};
+
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB Connected'))
+  .then(() => {
+    console.log('MongoDB Connected');
+    createAdminUser();
+  })
   .catch(err => console.error('MongoDB Connection Error:', err.message));
 
 app.use('/api/auth', authRoutes);
