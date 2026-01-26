@@ -1,9 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiPieChart, FiList, FiLogOut, FiDollarSign } from 'react-icons/fi';
+import { useTheme } from '../context/ThemeContext';
+import { FiPieChart, FiList, FiLogOut, FiDollarSign, FiSun, FiMoon, FiShield } from 'react-icons/fi';
 
 const Navbar = () => {
     const { user, logout, isAuthenticated } = useAuth();
+    const { isDark, toggleTheme } = useTheme();
     const location = useLocation();
 
     return (
@@ -31,9 +33,21 @@ const Navbar = () => {
                                 <FiList />
                                 <span>Transactions</span>
                             </Link>
+                            {user?.role === 'admin' && (
+                                <Link
+                                    to="/admin"
+                                    className={`navbar-link ${location.pathname === '/admin' ? 'active' : ''}`}
+                                >
+                                    <FiShield />
+                                    <span>Admin</span>
+                                </Link>
+                            )}
                         </div>
 
                         <div className="navbar-user">
+                            <button onClick={toggleTheme} className="btn-theme" title={isDark ? 'Light mode' : 'Dark mode'}>
+                                {isDark ? <FiSun /> : <FiMoon />}
+                            </button>
                             <span className="user-name">Hello, {user?.name}</span>
                             <button onClick={logout} className="btn-logout">
                                 <FiLogOut />

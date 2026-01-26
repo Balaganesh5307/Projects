@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const transactionRoutes = require('./routes/transactions');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 
@@ -39,6 +40,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Finance Tracker API is running!' });
