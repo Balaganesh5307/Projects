@@ -4,6 +4,8 @@ import api from '../utils/api';
 
 const AuthContext = createContext(null);
 
+const ADMIN_EMAILS = ['admin5307@gmail.com'];
+
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
@@ -24,19 +26,32 @@ const getStoredUser = () => {
 const getRoleFromToken = (token) => {
     try {
         const decoded = jwtDecode(token);
-        return decoded.role || 'user';
+        return decoded.role || null;
     } catch {
-        return 'user';
+        return null;
     }
+};
+
+const determineRole = (email, tokenRole, apiRole) => {
+    if (ADMIN_EMAILS.includes(email?.toLowerCase())) {
+        return 'admin';
+    }
+    return apiRole || tokenRole || 'user';
 };
 
 export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem('token');
     const storedUser = getStoredUser();
 
-    const [user, setUser] = useState(storedUser);
+    const [user, setUser] = useState(() => {
+        if (storedUser) {
+            const role = determineRole(storedUser.email, null, storedUser.role);
+            return { ...storedUser, role };
+        }
+        return null;
+    });
     const [token, setToken] = useState(storedToken);
-    const [loading, setLoading] = useState(!!storedToken);
+    const [loading, setLoading] = useState(!!storedToken && !storedUser);
 
     useEffect(() => {
         if (token && !user) {
@@ -52,11 +67,12 @@ export const AuthProvider = ({ children }) => {
         try {
             const res = await api.get('/api/auth/user');
             const tokenRole = getRoleFromToken(token);
+            const role = determineRole(res.data.email, tokenRole, res.data.role);
             const userData = {
                 id: res.data.id || res.data._id,
                 name: res.data.name,
                 email: res.data.email,
-                role: res.data.role || tokenRole
+                role: role
             };
             setUser(userData);
             localStorage.setItem('user', JSON.stringify(userData));
@@ -75,9 +91,13 @@ export const AuthProvider = ({ children }) => {
         const { token: newToken, user: userData } = res.data;
 
         const tokenRole = getRoleFromToken(newToken);
+        const role = determineRole(userData.email || email, tokenRole, userData.role);
+
         const userWithRole = {
-            ...userData,
-            role: userData.role || tokenRole
+            id: userData.id,
+            name: userData.name,
+            email: userData.email || email,
+            role: role
         };
 
         localStorage.setItem('token', newToken);
@@ -96,11 +116,14 @@ export const AuthProvider = ({ children }) => {
         const res = await api.post('/api/auth/register', { name, email, password });
         const { token: newToken, user: userData } = res.data;
 
+        const role = determineRole(userData.email || email, null, userData.role);
+        const userWithRole = { ...userData, role };
+
         localStorage.setItem('token', newToken);
-        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('user', JSON.stringify(userWithRole));
 
         setToken(newToken);
-        setUser(userData);
+        setUser(userWithRole);
 
         return res.data;
     };
